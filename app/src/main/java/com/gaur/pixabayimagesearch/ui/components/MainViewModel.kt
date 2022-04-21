@@ -4,7 +4,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gaur.pixabayimagesearch.network.model.Hit
 import com.gaur.pixabayimagesearch.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -26,10 +25,10 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                     list.value = MainState(error = "Something went wrong")
                 }
                 is Resource.Success->{
-                    result.data?.hits?.let {
-                        list.value = MainState(data = it)
+                    result.data?.let {
+                        list.value = MainState(data = it.hits, total = it.total)
+//                        PixabayResponse(total = it.total, totalHits = it.totalHits, hits = it.hits)
                     }
-
                 }
             }
         }catch (e:Exception){

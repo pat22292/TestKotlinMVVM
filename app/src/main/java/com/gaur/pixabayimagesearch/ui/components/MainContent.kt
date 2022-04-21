@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.gaur.pixabayimagesearch.network.model.Hit
+import com.gaur.pixabayimagesearch.network.model.PixabayResponse
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
@@ -46,8 +47,7 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel()) {
                 modifier=Modifier.fillMaxWidth()
             )
 
-
-
+            Text(text = "Testing ng kuwan")
 
             if (result.isLoading) {
                 Log.d("TAG", "MainContent: in the loading")
@@ -71,8 +71,18 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel()) {
 
 
             if (result.data.isNotEmpty()) {
+                Text(text = viewModel.list.value.total.toString())
                 LazyVerticalGrid(cells = GridCells.Fixed(2)) {
-                    Log.d("TAG", "MainContent: Your Token")
+//                    Log.d("TAG", "MainContent: Your Token")
+
+
+//                    viewModel.list.value.total?.let {
+//                        items(it) {
+
+//                        }
+//                    }
+
+                   Log.d("SHT", viewModel.list.value.total.toString())
                     viewModel.list.value.data?.let {
                         items(it) {
                             MainContentItem(it)
