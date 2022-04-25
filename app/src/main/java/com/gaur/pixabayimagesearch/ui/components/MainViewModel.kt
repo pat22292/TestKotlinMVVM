@@ -1,5 +1,6 @@
 package com.gaur.pixabayimagesearch.ui.components
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -27,6 +28,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
                 is Resource.Success->{
                     result.data?.let {
                         list.value = MainState(data = it.hits, total = it.total)
+                        Log.d("Hit ", "${it.hits}")
 //                        PixabayResponse(total = it.total, totalHits = it.totalHits, hits = it.hits)
                     }
                 }

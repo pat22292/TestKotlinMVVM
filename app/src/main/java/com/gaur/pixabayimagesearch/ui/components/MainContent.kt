@@ -22,15 +22,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.gaur.pixabayimagesearch.network.model.Hit
-import com.gaur.pixabayimagesearch.network.model.PixabayResponse
+import com.gaur.pixabayimagesearch.ui.components.single_product.SingleProductViewModel
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
-fun MainContent(viewModel: MainViewModel = hiltViewModel()) {
+fun MainContent(viewModel: MainViewModel = hiltViewModel(), singleProductModel: SingleProductViewModel = hiltViewModel()) {
 
     val query: MutableState<String> = remember { mutableStateOf("") }
     val result = viewModel.list.value
+    val depotResult = singleProductModel.list.value
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(8.dp)) {
 
@@ -46,8 +48,13 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel()) {
                 label = { Text(text = "Search here...") },
                 modifier=Modifier.fillMaxWidth()
             )
+            Button(
 
-            Text(text = "Testing ng kuwan")
+                onClick = { singleProductModel.getVariationList() }
+            ) {
+                Text(text = "Palkups")
+            }
+//            Text(text = "Testing ng kuwan")
 
             if (result.isLoading) {
                 Log.d("TAG", "MainContent: in the loading")
@@ -57,7 +64,9 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel()) {
                 }
             }
 
-
+            if (depotResult.store_branch.isNotEmpty()) {
+                Log.d("Depot", "${depotResult.variation}")
+            }
             if (result.error.isNotBlank()) {
                 Log.d("TAG", "MainContent: ${result.error}")
                 Box(modifier = Modifier
@@ -69,9 +78,9 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel()) {
                 }
             }
 
-
+            Text(text = "Founded Image/s: ${viewModel.list.value.total.toString()} items")
             if (result.data.isNotEmpty()) {
-                Text(text = viewModel.list.value.total.toString())
+
                 LazyVerticalGrid(cells = GridCells.Fixed(2)) {
 //                    Log.d("TAG", "MainContent: Your Token")
 

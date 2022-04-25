@@ -14,7 +14,8 @@ interface ApiService {
         @Query("key") apiKey:String,
         @Query("image_type") imageType:String
     ):PixabayResponse
+    @GET("product/5")
+    suspend fun getSingleProducts():SingleProduct
 
-    @GET("product/2")
-    suspend fun getProduct():SingleProduct
+
 }

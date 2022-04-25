@@ -3,7 +3,7 @@ package com.gaur.pixabayimagesearch.network.model
 data class SingleProduct(
     val description: String,
     val id: Int,
-    val img_gallery: List<Any>,
+    val img_gallery: List<String>,
     val img_id: String,
     val max: Int,
     val min: Int,
