@@ -7,6 +7,7 @@ import com.gaur.pixabayimagesearch.network.model.Variation
 
 data class SingleProductState (
     val isLoading:Boolean=false,
+    val product_name:String="",
     val store_branch:List<StoreBranch> = emptyList(),
     val variation:List<Variation> = emptyList(),
     val error:String="",

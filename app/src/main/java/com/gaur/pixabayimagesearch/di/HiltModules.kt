@@ -18,7 +18,7 @@ object HiltModules {
     @Singleton
     @Provides
     fun provideApiService(): ApiService {
-        return Retrofit.Builder().baseUrl(Constant.BASE_URL)
+        return Retrofit.Builder().baseUrl(Constant.DEPOT_URL)
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(ApiService::class.java)
     }

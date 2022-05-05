@@ -5,6 +5,8 @@ import com.gaur.pixabayimagesearch.network.model.SingleProduct
 
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.Path
+
 
 interface ApiService {
 
@@ -14,8 +16,12 @@ interface ApiService {
         @Query("key") apiKey:String,
         @Query("image_type") imageType:String
     ):PixabayResponse
-    @GET("product/5")
-    suspend fun getSingleProducts():SingleProduct
+
+
+    @GET("product/{id}")
+    suspend fun getSingleProducts(
+        @Path(value = "id") product_id: Int
+    ):SingleProduct
 
 
 }

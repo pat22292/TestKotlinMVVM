@@ -15,12 +15,12 @@ class SingleProductViewModel @Inject constructor(private val singleProductReposi
     val list: MutableState<SingleProductState> = mutableStateOf(SingleProductState())
 
 
-    fun getVariationList()=viewModelScope.launch{
+    fun getVariationList(id: Int)=viewModelScope.launch{
 
         Log.d("Depot", "Damn It!")
         list.value = SingleProductState(isLoading = true)
         try{
-            val result = singleProductRepository.getSingleProduct()
+            val result = singleProductRepository.getSingleProduct(id)
             when(result){
                 is Resource.Error->{
                     list.value = SingleProductState(error = "Something went wrong")
@@ -28,7 +28,7 @@ class SingleProductViewModel @Inject constructor(private val singleProductReposi
                 is Resource.Success->{
 
                     result.data?.let {
-                        list.value = SingleProductState(store_branch = it.store_branches, variation = it.variations)
+                        list.value = SingleProductState(store_branch = it.store_branches, variation = it.variations, product_name = it.product_name)
                         Log.d("Depot", "${it.store_name}")
                         Log.d("Depot", "${it.variations}")
                     }
@@ -43,5 +43,9 @@ class SingleProductViewModel @Inject constructor(private val singleProductReposi
 
 
 
+    }
+
+    init {
+        getVariationList(5)
     }
 }
