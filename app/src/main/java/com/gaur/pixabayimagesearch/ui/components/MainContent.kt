@@ -26,7 +26,8 @@ import coil.compose.rememberImagePainter
 import com.gaur.pixabayimagesearch.network.model.Hit
 import com.gaur.pixabayimagesearch.network.model.Variation
 import com.gaur.pixabayimagesearch.ui.components.single_product.SingleProductViewModel
-
+import java.util.*
+import kotlin.concurrent.timerTask
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -88,7 +89,7 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel(), singleProductModel: 
 //                }
 //            }
             var veriationIndex by remember { mutableStateOf(0) }
-
+            var visible by remember { mutableStateOf(true) }
 //            Text(text = "Founded Image/s: ${viewModel.list.value.total.toString()} items")
             if (depotResult.variation.isNotEmpty()) {
 
@@ -96,27 +97,44 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel(), singleProductModel: 
                     modifier = Modifier
 //                        .padding(8.dp)
                         .fillMaxWidth()
-                        .height(250.dp)
+                        .height(350.dp)
                 ) {
-                    Image(
-                        painter = rememberImagePainter(data = "https://res.cloudinary.com/dhdn7ukv9/image/upload/${singleProductModel.list.value.variation[veriationIndex].variation_image}" ),
-                        contentScale = ContentScale.Fit,
-                        contentDescription = null,
-//            modifier = Modifier
-//                .width(150.dp)
-//                .height(150.dp)
-//                .fillMaxWidth()
-//                .fillMaxHeight()
-                    )
+
+
+
+                    AnimatedVisibility(
+                        visible = visible,
+                        enter = fadeIn(animationSpec = tween(durationMillis = 500)),
+                        exit = fadeOut(animationSpec = tween(durationMillis = 500))
+                    ) {
+//                        Text("Hello", Modifier.fillMaxWidth().height(200.dp))
+                        Image(
+                            painter = rememberImagePainter(data = "https://res.cloudinary.com/dhdn7ukv9/image/upload/${singleProductModel.list.value.variation[veriationIndex].variation_image}" ),
+                            contentScale = ContentScale.Fit,
+                            contentDescription = null,
+
+                        )
+                    }
+
                 }
                Row(modifier = Modifier.padding(8.dp)) {
                    Button(
                        onClick =
                        {
-                           veriationIndex = 0
+
+                           visible = false
+
+                           Timer().schedule(timerTask {
+                               veriationIndex = 0
+                               visible = true
+
+
+                           }, 200)
+
+
                        },
                        colors = ButtonDefaults.buttonColors(Color.Blue),
-                       modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
+                       modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp)
                    ) {
                        Text(text = "Blue", color = Color.White)
 
@@ -124,9 +142,18 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel(), singleProductModel: 
                    Button(
                        onClick =
                        {
-                           veriationIndex = 1
+                           visible = false
+
+                           Timer().schedule(timerTask {
+                               veriationIndex = 1
+                               visible = true
+
+
+                           }, 200)
+
                        },
-                       colors = ButtonDefaults.buttonColors(Color.Black)
+                       colors = ButtonDefaults.buttonColors(Color.Black),
+                       modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp)
                    ) {
                        Text(text = "Black", color = Color.White)
 
@@ -134,9 +161,18 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel(), singleProductModel: 
                    Button(
                        onClick =
                        {
-                           veriationIndex = 2
+                           visible = false
+
+                           Timer().schedule(timerTask {
+                               veriationIndex = 2
+                               visible = true
+
+
+                           }, 200)
+
                        },
-                       colors = ButtonDefaults.buttonColors(Color.Red)
+                       colors = ButtonDefaults.buttonColors(Color.Red),
+                       modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp)
                    ) {
                        Text(text = "Pink", color = Color.White)
 
