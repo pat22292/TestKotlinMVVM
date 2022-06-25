@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gaur.pixabayimagesearch.ui.components.single_product.SingleProductState
 import com.gaur.pixabayimagesearch.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -42,6 +43,35 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
 
     }
+    fun getProducts()=viewModelScope.launch {
+
+        Log.d("Depot", "Damn It!")
+        list.value = MainState(isLoading = true)
+        try {
+            val result = mainRepository.getProducts()
+            when (result) {
+                is Resource.Error -> {
+                    list.value = MainState(error = "Something went wrong")
+                }
+                is Resource.Success -> {
 
 
+                    result.data?.let {
+                        list.value = MainState(
+                            products = it.products
+                        )
+
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            list.value = MainState(error = "Something went wrong")
+            Log.d("Depot", "Something went wrong")
+        }
+
+    }
+
+    init {
+        getProducts()
+    }
 }

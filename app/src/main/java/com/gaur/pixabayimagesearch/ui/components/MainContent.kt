@@ -1,200 +1,99 @@
 package com.gaur.pixabayimagesearch.ui.components
 
-import android.util.Log
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.Intent
+import android.content.SharedPreferences
+import android.widget.GridLayout
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
-import com.gaur.pixabayimagesearch.network.model.Hit
-import com.gaur.pixabayimagesearch.network.model.Variation
+import com.gaur.pixabayimagesearch.R
+import com.gaur.pixabayimagesearch.network.model.ProductX
+import com.gaur.pixabayimagesearch.ui.components.driver.DriverActivity
 import com.gaur.pixabayimagesearch.ui.components.single_product.SingleProductViewModel
+import java.text.NumberFormat
 import java.util.*
-import kotlin.concurrent.timerTask
-
+import androidx.core.view.WindowCompat
 
 @OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
+
 fun MainContent(viewModel: MainViewModel = hiltViewModel(), singleProductModel: SingleProductViewModel = hiltViewModel()) {
 
 
+    val context = LocalContext.current
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences("SharedRef", Context.MODE_PRIVATE)
+
+    val editor :SharedPreferences.Editor = sharedPreferences.edit()
+    editor.apply{
+        putBoolean("FIRST_RUN", true)
+    }.apply()
 
     val query: MutableState<String> = remember { mutableStateOf("") }
     val result = viewModel.list.value
     val depotResult = singleProductModel.list.value
+
+
     Surface(modifier = Modifier.fillMaxSize()) {
 
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(0.dp)) {
+           Row(
+               Modifier
+                   .background(Color.Black)
+                   .padding(14.dp)
+                   .height(35.dp)
 
-//            AnimatableSample()
-//            OutlinedTextField(value = query.value, onValueChange = {
-//                query.value = it
-//                viewModel.getImageList(query.value)
-//
-//            }, enabled = true,
-//                singleLine = true,
-//                leadingIcon = {
-//                    Icon(imageVector = Icons.Default.Search, contentDescription = null)
-//                },
-//                label = { Text(text = "Search here...") },
-//                modifier=Modifier.fillMaxWidth()
-//
-//            )
-//            Button(
-//
-//                onClick = { singleProductModel.getVariationList(4) }
-//            ) {
-//                Text(text = "Palkups")
-//            }
-//            Text(text = "${depotResult.product_name}")
-//            AnimatableSample()
-//            Text(text = "${depotResult.variation.count()}")
-//            if (result.isLoading) {
-//                Log.d("TAG", "MainContent: in the loading")
-//                Box(modifier = Modifier
-//                    .fillMaxSize()) {
-//                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-//                }
-//            }
+           ) {
+               AppBar( leadingIcon = {
+                   Icon(
 
-//            if (depotResult.store_branch.isNotEmpty()) {
-//                Log.d("Depot", "${depotResult.variation}")
-//            }
-//            if (result.error.isNotBlank()) {
-//                Log.d("TAG", "MainContent: ${result.error}")
-//                Box(modifier = Modifier
-//                    .fillMaxSize()) {
-//                    Text(
-//                        modifier = Modifier.align(Alignment.Center),
-//                        text = viewModel.list.value.error
-//                    )
-//                }
-//            }
-            var veriationIndex by remember { mutableStateOf(0) }
-            var visible by remember { mutableStateOf(true) }
-//            Text(text = "Founded Image/s: ${viewModel.list.value.total.toString()} items")
-            if (depotResult.variation.isNotEmpty()) {
+                       Icons.Filled.Search,
+                       null,
+modifier = Modifier.height(22.dp)
+    .width(18.dp)
+                   )
+               })
+           }
 
-                Card(
-                    modifier = Modifier
-//                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .height(350.dp)
-                ) {
-
-
-
-                    AnimatedVisibility(
-                        visible = visible,
-                        enter = fadeIn(animationSpec = tween(durationMillis = 500)),
-                        exit = fadeOut(animationSpec = tween(durationMillis = 500))
-                    ) {
-//                        Text("Hello", Modifier.fillMaxWidth().height(200.dp))
-                        Image(
-                            painter = rememberImagePainter(data = "https://res.cloudinary.com/dhdn7ukv9/image/upload/${singleProductModel.list.value.variation[veriationIndex].variation_image}" ),
-                            contentScale = ContentScale.Fit,
-                            contentDescription = null,
-
-                        )
-                    }
-
-                }
-               Row(modifier = Modifier.padding(8.dp)) {
-                   Button(
-                       onClick =
-                       {
-
-                           visible = false
-
-                           Timer().schedule(timerTask {
-                               veriationIndex = 0
-                               visible = true
-
-
-                           }, 200)
-
-
-                       },
-                       colors = ButtonDefaults.buttonColors(Color.Blue),
-                       modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp)
-                   ) {
-                       Text(text = "Blue", color = Color.White)
-
-                   }
-                   Button(
-                       onClick =
-                       {
-                           visible = false
-
-                           Timer().schedule(timerTask {
-                               veriationIndex = 1
-                               visible = true
-
-
-                           }, 200)
-
-                       },
-                       colors = ButtonDefaults.buttonColors(Color.Black),
-                       modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp)
-                   ) {
-                       Text(text = "Black", color = Color.White)
-
-                   }
-                   Button(
-                       onClick =
-                       {
-                           visible = false
-
-                           Timer().schedule(timerTask {
-                               veriationIndex = 2
-                               visible = true
-
-
-                           }, 200)
-
-                       },
-                       colors = ButtonDefaults.buttonColors(Color.Red),
-                       modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp)
-                   ) {
-                       Text(text = "Pink", color = Color.White)
-
-                   }
-               }
                 LazyVerticalGrid(cells = GridCells.Fixed(2)) {
-//                    Log.d("TAG", "MainContent: Your Token")
 
 
-//                    viewModel.list.value.total?.let {
-//                        items(it) {
+                    viewModel.list.value.products?.let {
+                        items(it) {
+                            MainContentItem(it)
+                        }
 
-//                        }
-//                    }
-
-//                   Log.d("SHT", viewModel.list.value.total.toString())
-//                    singleProductModel.list.value.variation?.let {
-//                        items(it) {
-//                            MainContentItem(it)
-//                        }
-//
-//                    }
+                    }
 
                 }
 
@@ -205,83 +104,198 @@ fun MainContent(viewModel: MainViewModel = hiltViewModel(), singleProductModel: 
     }
 
 
+//}
+
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+
+fun AppBar(leadingIcon: (@Composable () -> Unit)? = null, ) {
+
+     val CELL_COUNT = 8
+
+     val span: (LazyGridItemSpanScope) -> GridItemSpan = { GridItemSpan(CELL_COUNT) }
+
+    var text by remember { mutableStateOf("Search....") }
+    LazyVerticalGrid(cells = GridCells.Fixed(10)) {
+        item(span = span) {
+
+           BasicTextField( modifier = Modifier
+               .background(
+                   MaterialTheme.colors.surface,
+                   MaterialTheme.shapes.small,
+               )
+
+
+
+               .padding(vertical = 4.dp, horizontal = 5.dp),
+
+               value = text,
+
+               onValueChange = {text = it},
+               singleLine = true,
+               textStyle = LocalTextStyle.current.copy(
+                   color = Color.Black,
+                   fontSize = 14.sp,
+
+               ),
+               decorationBox = { innerTextField ->
+                   Row(
+                      modifier = Modifier
+                          .padding(1.dp)
+
+                   ) {
+                       if (leadingIcon != null) leadingIcon()
+                       Box(Modifier.weight(1f)) {
+
+                           innerTextField()
+                       }
+
+                   }
+               }
+           )
+
+
+        }
+
+        val CELL_COUNT_1 = 2
+
+        val span_1: (LazyGridItemSpanScope) -> GridItemSpan = { GridItemSpan(CELL_COUNT_1) }
+item(span = span_1 ) {
+
+    Box(
+        Modifier
+            .width(36.dp)
+            .height(36.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        IconButton(onClick = { },
+
+
+            ) {
+
+            Icon( imageVector = Icons.Outlined.ShoppingCart, contentDescription = "", tint = Color.White)
+        }
+
+    }
+
+
+
+}
+}
+
+
+
 }
 
 
 
 @Composable
-fun MainContentItem(variation: Variation) {
+fun HomeScreen() {
+    Box(Modifier.verticalScroll(rememberScrollState())) {
+//        Image(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .offset(0.dp, (-30).dp),
+//            painter = painterResource(id = R.drawable.bg_main),
+//            contentDescription = "Header Background",
+//            contentScale = ContentScale.FillWidth
+//        )
+        Column {
+            AppBar(  leadingIcon = {
+                Icon(
+                    Icons.Filled.Search,
+                    null,
 
+                )
+            })
+
+
+        }
+    }
+}
+
+@Composable
+fun MainContentItem(productX: ProductX, singleProductModel: SingleProductViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+
+
+
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences("SharedRef", Context.MODE_PRIVATE)
+    val editor :SharedPreferences.Editor = sharedPreferences.edit()
+Column() {
     Card(
+        elevation = 0.dp,
         modifier = Modifier
-            .padding(8.dp)
+            .padding(vertical = 4.dp)
             .fillMaxWidth()
-            .height(150.dp)
+            .height(170.dp)
+
+
     ) {
+
+
+//        val context = LocalContext.current
+//        val sharedPreferences: SharedPreferences = context.getSharedPreferences("SharedRef", Context.MODE_PRIVATE)
+
+//        val editor :SharedPreferences.Editor = sharedPreferences.edit()
+//        editor.apply{
+//            putBoolean("FIRST_RUN", true)
+//        }.apply()
+
+
         Image(
-            painter = rememberImagePainter(data = "https://res.cloudinary.com/dhdn7ukv9/image/upload/${variation.variation_image}" ),
+            painter = rememberImagePainter(data = "https://res.cloudinary.com/dhdn7ukv9/image/upload/${productX.img_id}" ),
             contentScale = ContentScale.Fit,
             contentDescription = null,
+            modifier = Modifier.clickable(
+                onClick = {
+                    editor.apply{
+                        putInt("TEST", productX.id)
+                        putBoolean("FIRST_RUN", true)
+                    }.apply()
+//               singleProductModel.setSelectedID(productX.id)
+//               singleProductModel.getVariationList(productX.id)
+                    context.startActivity(
+                        Intent(
+                            context,
+                            DriverActivity::class.java
+                        )
+                    )
+                }
+            )
+        )
+
 //            modifier = Modifier
 //                .width(150.dp)
 //                .height(150.dp)
 //                .fillMaxWidth()
 //                .fillMaxHeight()
-        )
+//        )
     }
+    Text(text = "${ productX.product_name}", fontSize = 12.sp, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.SemiBold,   modifier = Modifier
+        .padding(horizontal =  8.dp))
+    if(productX.price != 0) {
+        Text(text = "₱${productX.price}", fontSize = 12.sp, color = Color.Red, fontWeight = FontWeight.SemiBold,   modifier = Modifier
+            .padding(horizontal =  8.dp))
+    }
+    else {
+
+        val min = NumberFormat.getNumberInstance(Locale.US)
+            .format(productX.min)
+
+        val max = NumberFormat.getNumberInstance(Locale.US)
+            .format(productX.max)
+
+        Text(text = "₱${min}-₱${max}", fontSize = 12.sp, color = Color.Red, fontWeight = FontWeight.SemiBold,   modifier = Modifier
+            .padding(horizontal = 8.dp))
+    }
+}
+
 
 
 }
 
-@Composable
-private fun AnimatableSample() {
-    var isAnimated by remember { mutableStateOf(false) }
-
-    val color = remember { Animatable(Color.DarkGray) }
-
-    // animate to green/red based on `button click`
-    LaunchedEffect(isAnimated) {
-        color.animateTo(if (isAnimated) Color.Green else Color.Red, animationSpec = tween(2000))
-    }
-
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.8f)
-            .background(color.value)
-
-    )
-    Button(
-        onClick = { isAnimated = !isAnimated },
-        modifier = Modifier.padding(top = 10.dp)
-    ) {
-        Text(text = "Animate Color")
-    }
-}
-
-@Composable
-private fun testFade() {
-    var visible by remember { mutableStateOf(true) }
-    val density = LocalDensity.current
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInVertically {
-            // Slide in from 40 dp from the top.
-            with(density) { -40.dp.roundToPx() }
-        } + expandVertically(
-            // Expand from the top.
-            expandFrom = Alignment.Top
-        ) + fadeIn(
-            // Fade in with the initial alpha of 0.3f.
-            initialAlpha = 0.3f
-        ),
-        exit = slideOutVertically() + shrinkVertically() + fadeOut()
-    ) {
-        Text("Hello",
-            Modifier
-                .fillMaxWidth()
-                .height(200.dp))
-    }
-}
 
 

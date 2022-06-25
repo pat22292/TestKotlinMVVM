@@ -1,6 +1,7 @@
 package com.gaur.pixabayimagesearch.network
 
 import com.gaur.pixabayimagesearch.network.model.PixabayResponse
+import com.gaur.pixabayimagesearch.network.model.Product
 import com.gaur.pixabayimagesearch.network.model.SingleProduct
 
 import retrofit2.http.GET
@@ -23,5 +24,6 @@ interface ApiService {
         @Path(value = "id") product_id: Int
     ):SingleProduct
 
-
+    @GET("view-products")
+    suspend fun getProducts():Product
 }
